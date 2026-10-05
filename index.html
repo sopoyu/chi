@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miffy 米菲兔的修辭花園：明喻與借喻大冒險</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Fredoka & Noto Sans TC -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --miffy-red: #e63946;
+      --miffy-yellow: #ffb703;
+      --miffy-blue: #023e8a;
+      --miffy-green: #2a9d8f;
+      --miffy-orange: #f4a261;
+      --miffy-black: #1d3557;
+      --miffy-cream: #fffbeb;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+      background-color: #f7f3e9;
+      background-image: radial-gradient(#e2d9c8 15%, transparent 16%), radial-gradient(#e2d9c8 15%, transparent 16%);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+      color: #1d3557;
+      min-height: 100vh;
+      user-select: none;
+    }
+
+    /* Bruna Style Bold Border Cards */
+    .bruna-card {
+      background-color: #ffffff;
+      border: 4px solid var(--miffy-black);
+      border-radius: 24px;
+      box-shadow: 6px 6px 0px var(--miffy-black);
+    }
+
+    .bruna-btn {
+      border: 3.5px solid var(--miffy-black);
+      border-radius: 20px;
+      font-weight: 800;
+      box-shadow: 4px 4px 0px var(--miffy-black);
+      transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .bruna-btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--miffy-black);
+    }
+
+    .bruna-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--miffy-black);
+    }
+
+    .btn-ming {
+      background-color: #4cc9f0;
+      color: #03045e;
+    }
+
+    .btn-jie {
+      background-color: #ff70a6;
+      color: #590d22;
+    }
+
+    .btn-action {
+      background-color: var(--miffy-yellow);
+      color: #1d3557;
+    }
+
+    /* Miffy Speech Bubble */
+    .speech-bubble {
+      position: relative;
+      background: #ffffff;
+      border: 3px solid var(--miffy-black);
+      border-radius: 18px;
+      box-shadow: 3px 3px 0px var(--miffy-black);
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 30px;
+      border-width: 12px 10px 0;
+      border-style: solid;
+      border-color: var(--miffy-black) transparent;
+      display: block;
+      width: 0;
+    }
+
+    /* Animations */
+    @keyframes miffy-jump {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-18px) scale(1.05); }
+    }
+    .anim-jump { animation: miffy-jump 0.5s ease-in-out 2; }
+
+    @keyframes miffy-wobble {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+    .anim-wobble { animation: miffy-wobble 0.4s ease-in-out 2; }
+
+    @keyframes pulse-soft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .anim-pulse { animation: pulse-soft 1.5s infinite ease-in-out; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #f1e9d2; }
+    ::-webkit-scrollbar-thumb { background: var(--miffy-orange); border-radius: 5px; border: 2px solid var(--miffy-black); }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center p-3 sm:p-6 min-h-screen">
+
+  <!-- Sound Toggle Button -->
+  <div class="fixed top-4 right-4 z-50">
+    <button id="sound-btn" onclick="toggleMute()" class="bruna-btn bg-white px-3 py-2 text-sm flex items-center gap-2 cursor-pointer">
+      <i id="sound-icon" class="fas fa-volume-up text-amber-500"></i>
+      <span id="sound-text" class="font-bold text-xs sm:text-sm">音效開</span>
+    </button>
+  </div>
+
+  <!-- Main Game Container Card -->
+  <div id="game-card" class="w-full max-w-3xl bruna-card p-4 sm:p-7 relative transition-all duration-300 my-auto">
+    
+    <!-- TOP HEADER / STATS HUD -->
+    <header class="flex flex-wrap justify-between items-center border-b-4 border-[#1d3557] pb-4 mb-5 gap-3">
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-3">
+        <!-- SVG Miffy Logo Badge -->
+        <div class="w-12 h-12 bg-[#e63946] border-3 border-[#1d3557] rounded-full flex items-center justify-center p-1 shadow-md">
+          <svg viewBox="0 0 100 100" class="w-10 h-10">
+            <!-- Miffy Ears -->
+            <ellipse cx="38" cy="28" rx="8" ry="22" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <ellipse cx="62" cy="28" rx="8" ry="22" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <!-- Miffy Head -->
+            <ellipse cx="50" cy="62" rx="32" ry="28" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <!-- Eyes -->
+            <circle cx="38" cy="58" r="3.5" fill="#1d3557"/>
+            <circle cx="62" cy="58" r="3.5" fill="#1d3557"/>
+            <!-- Cross Mouth x -->
+            <path d="M46 66 L54 74 M54 66 L46 74" stroke="#1d3557" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-[#e63946] tracking-wide">
+            Miffy 米菲兔修辭花園
+          </h1>
+          <p class="text-xs font-bold text-[#2a9d8f]">學習辨識：明喻 vs 借喻</p>
+        </div>
+      </div>
+
+      <!-- Stats HUD (Visible during game) -->
+      <div id="hud-stats" class="hidden flex items-center gap-3 sm:gap-5 bg-[#fffbeb] px-4 py-2 rounded-2xl border-3 border-[#1d3557]">
+        <!-- Hearts HP -->
+        <div class="flex items-center space-x-1">
+          <span class="text-xs font-black mr-1 text-[#1d3557]">愛心:</span>
+          <div id="hearts-container" class="flex space-x-1 text-red-500 text-base sm:text-lg">
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+          </div>
+        </div>
+
+        <!-- Carrot Stars Score -->
+        <div class="flex items-center space-x-1.5">
+          <i class="fas fa-carrot text-orange-500 text-lg"></i>
+          <span id="carrot-score" class="font-black text-amber-600 text-lg">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- START SCREEN -->
+    <section id="screen-start" class="text-center py-4 sm:py-8 space-y-6">
+      <div class="relative inline-block my-2">
+        <!-- Big Miffy SVG Vector Banner -->
+        <div class="w-32 h-32 sm:w-40 sm:h-40 mx-auto bg-[#ffb703] border-4 border-[#1d3557] rounded-full flex items-center justify-center p-2 shadow-lg anim-pulse">
+          <svg viewBox="0 0 120 140" class="w-28 h-32">
+            <!-- Ears -->
+            <ellipse cx="44" cy="32" rx="11" ry="30" fill="#ffffff" stroke="#1d3557" stroke-width="7"/>
+            <ellipse cx="76" cy="32" rx="11" ry="30" fill="#ffffff" stroke="#1d3557" stroke-width="7"/>
+            <!-- Dress -->
+            <path d="M25 130 L95 130 L85 95 L35 95 Z" fill="#e63946" stroke="#1d3557" stroke-width="7" stroke-linejoin="round"/>
+            <!-- Head -->
+            <ellipse cx="60" cy="78" rx="40" ry="32" fill="#ffffff" stroke="#1d3557" stroke-width="7"/>
+            <!-- Eyes -->
+            <circle cx="44" cy="74" r="4.5" fill="#1d3557"/>
+            <circle cx="76" cy="74" r="4.5" fill="#1d3557"/>
+            <!-- Cross Mouth -->
+            <path d="M54 84 L66 94 M66 84 L54 94" stroke="#1d3557" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="max-w-xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-[#1d3557]">歡迎來到 米菲的修辭小花園！</h2>
+        <p class="text-sm sm:text-base text-slate-700 font-bold leading-relaxed px-2">
+          跟著 Miffy 一起探索 20 個有趣的修辭句子，練習分辨<b>「明喻」</b>與<b>「借喻」</b>，贏取豐盛的胡蘿蔔獎勵吧！
+        </p>
+      </div>
+
+      <!-- Quick Explanation Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto text-left text-xs sm:text-sm my-4">
+        <div class="bg-[#e0f2fe] border-3 border-[#1d3557] p-3 rounded-2xl">
+          <div class="font-black text-[#0284c7] text-base mb-1">
+            <i class="fas fa-sun mr-1"></i> 明喻 (Simile)
+          </div>
+          <p class="text-slate-800 font-bold">三要素都在：<b>本體 + 喻詞 + 喻體</b></p>
+          <p class="text-slate-600 text-xs mt-1">常含「像、如、好像、宛如」<br>例：彎彎的月亮<b>像</b>小船。</p>
+        </div>
+
+        <div class="bg-[#fce7f3] border-3 border-[#1d3557] p-3 rounded-2xl">
+          <div class="font-black text-[#db2777] text-base mb-1">
+            <i class="fas fa-cloud-sun mr-1"></i> 借喻 (Borrowed)
+          </div>
+          <p class="text-slate-800 font-bold"><b>只有喻體</b>（無本體、無喻詞）</p>
+          <p class="text-slate-600 text-xs mt-1">直接用喻體代替本體<br>例：露出了<b>狐狸尾巴</b>。</p>
+        </div>
+      </div>
+
+      <div>
+        <button onclick="startGame()" class="bruna-btn btn-action text-xl sm:text-2xl px-10 py-3.5 cursor-pointer">
+          <i class="fas fa-play-circle mr-2"></i> 開始花園冒險！
+        </button>
+      </div>
+    </section>
+
+    <!-- QUIZ PLAY SCREEN -->
+    <section id="screen-quiz" class="hidden space-y-5">
+      <!-- Progress Bar -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center text-xs sm:text-sm font-black text-[#1d3557]">
+          <span><i class="fas fa-seedling text-green-600 mr-1"></i> 探索關卡</span>
+          <span id="stage-progress-text">第 1 / 20 關</span>
+        </div>
+        <div class="w-full bg-white h-4 rounded-full border-3 border-[#1d3557] overflow-hidden p-0.5">
+          <div id="progress-bar" class="bg-[#ffb703] h-full rounded-full transition-all duration-300 w-[5%] border-r-2 border-[#1d3557]"></div>
+        </div>
+      </div>
+
+      <!-- Miffy Avatar & Speech Bubble Area -->
+      <div class="flex items-end space-x-3 sm:space-x-4">
+        <!-- Miffy SVG Avatar -->
+        <div id="miffy-character" class="w-20 h-24 sm:w-24 sm:h-28 flex-shrink-0 relative transition-transform">
+          <svg viewBox="0 0 100 120" class="w-full h-full drop-shadow-md">
+            <!-- Ears -->
+            <ellipse cx="36" cy="25" rx="9" ry="24" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <ellipse cx="64" cy="25" rx="9" ry="24" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <!-- Clothes -->
+            <path d="M20 110 L80 110 L72 80 L28 80 Z" fill="#2a9d8f" id="miffy-dress" stroke="#1d3557" stroke-width="6" stroke-linejoin="round"/>
+            <!-- Head -->
+            <ellipse cx="50" cy="65" rx="34" ry="27" fill="#ffffff" stroke="#1d3557" stroke-width="6"/>
+            <!-- Eyes -->
+            <circle cx="36" cy="62" r="4" fill="#1d3557" id="eye-left"/>
+            <circle cx="64" cy="62" r="4" fill="#1d3557" id="eye-right"/>
+            <!-- Cross Mouth -->
+            <path id="miffy-mouth" d="M44 71 L56 80 M56 71 L44 80" stroke="#1d3557" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Speech Bubble -->
+        <div class="flex-1 speech-bubble p-3 sm:p-4 text-xs sm:text-sm font-bold text-[#1d3557] mb-2">
+          <p id="miffy-speech">仔細讀讀看題目，這個句子是「明喻」還是「借喻」呢？</p>
+        </div>
+      </div>
+
+      <!-- Sentence Question Parchment/Card -->
+      <div id="sentence-card" class="bg-[#fffbeb] border-4 border-[#1d3557] p-5 sm:p-7 rounded-2xl min-h-[140px] flex items-center justify-center text-center relative shadow-sm">
+        <p id="sentence-text" class="text-xl sm:text-2xl font-black text-[#1d3557] leading-relaxed my-1">
+          題目載入中...
+        </p>
+      </div>
+
+      <!-- Clean Choice Buttons: STRICTLY ONLY "明喻" AND "借喻" -->
+      <div id="action-buttons" class="grid grid-cols-2 gap-4 pt-1">
+        <button onclick="handleAnswer('明喻')" class="bruna-btn btn-ming text-2xl sm:text-3xl font-black py-4 sm:py-5 cursor-pointer flex items-center justify-center gap-2">
+          <span>明 喻</span>
+        </button>
+
+        <button onclick="handleAnswer('借喻')" class="bruna-btn btn-jie text-2xl sm:text-3xl font-black py-4 sm:py-5 cursor-pointer flex items-center justify-center gap-2">
+          <span>借 喻</span>
+        </button>
+      </div>
+
+      <!-- Explanation & Next Question Box -->
+      <div id="explanation-box" class="hidden bg-white border-4 border-[#1d3557] p-4 rounded-2xl space-y-3">
+        <div id="explanation-header" class="font-black text-base sm:text-lg flex items-center gap-2"></div>
+        <p id="explanation-text" class="text-sm sm:text-base font-bold text-slate-700 leading-relaxed"></p>
+        <div class="flex justify-end pt-1">
+          <button id="next-btn" onclick="nextQuestion()" class="bruna-btn btn-action font-black px-6 py-2.5 text-base cursor-pointer flex items-center gap-2">
+            <span>下一題</span> <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VICTORY END SCREEN -->
+    <section id="screen-victory" class="hidden text-center py-6 space-y-6">
+      <div class="w-28 h-28 mx-auto bg-[#ffb703] border-4 border-[#1d3557] rounded-full flex items-center justify-center p-2 shadow-md anim-pulse">
+        <i class="fas fa-trophy text-5xl text-[#1d3557]"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-3xl font-black text-[#e63946]">太棒了！獲得修辭花園大獎！</h2>
+        <p class="text-base font-bold text-slate-700">你順利通過了全部 20 道修辭題目考驗！</p>
+      </div>
+
+      <!-- Scoreboard Card -->
+      <div class="max-w-md mx-auto bg-[#fffbeb] border-4 border-[#1d3557] p-5 rounded-2xl space-y-3 font-bold text-sm">
+        <div class="flex justify-between items-center border-b-2 border-amber-200 pb-2">
+          <span class="text-slate-600">答對題數：</span>
+          <span id="final-correct" class="font-black text-[#2a9d8f] text-base">20 / 20</span>
+        </div>
+        <div class="flex justify-between items-center border-b-2 border-amber-200 pb-2">
+          <span class="text-slate-400">收穫胡蘿蔔：</span>
+          <span id="final-carrots" class="font-black text-amber-600 text-base">0 根</span>
+        </div>
+        <div class="flex justify-between items-center text-base pt-1">
+          <span class="font-black text-[#1d3557]">獲得稱號：</span>
+          <span class="font-black text-[#e63946]">🌸 米菲修辭小博士 🌸</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4 pt-2">
+        <button onclick="startGame()" class="bruna-btn btn-action font-black px-7 py-3 text-lg cursor-pointer">
+          <i class="fas fa-redo mr-2"></i> 再玩一次
+        </button>
+        <button onclick="toggleReviewModal()" class="bruna-btn bg-[#4cc9f0] text-[#03045e] font-black px-6 py-3 text-lg cursor-pointer">
+          <i class="fas fa-book-open mr-2"></i> 溫習 20 題答案
+        </button>
+      </div>
+    </section>
+
+    <!-- DEFEAT END SCREEN -->
+    <section id="screen-defeat" class="hidden text-center py-6 space-y-6">
+      <div class="w-24 h-24 mx-auto bg-[#f8d7da] border-4 border-[#1d3557] rounded-full flex items-center justify-center shadow-md">
+        <i class="fas fa-heart-broken text-4xl text-red-500"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-black text-[#1d3557]">愛心用光了，沒關係！</h2>
+        <p class="text-slate-600 font-bold text-sm sm:text-base">修辭學習需要多加練習，米菲陪你再試一次！</p>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4 pt-2">
+        <button onclick="startGame()" class="bruna-btn btn-action font-black px-8 py-3 text-lg cursor-pointer">
+          <i class="fas fa-sync-alt mr-2"></i> 重新挑戰
+        </button>
+        <button onclick="toggleReviewModal()" class="bruna-btn bg-white font-black px-6 py-3 text-lg cursor-pointer">
+          <i class="fas fa-list mr-2"></i> 查看答案解析
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 20 SENTENCES REVIEW MODAL -->
+  <div id="review-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3">
+    <div class="bg-white border-4 border-[#1d3557] rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col p-4 sm:p-6 relative shadow-2xl">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center border-b-3 border-[#1d3557] pb-3 mb-3">
+        <h3 class="text-xl font-black text-[#1d3557] flex items-center gap-2">
+          <i class="fas fa-seedling text-green-600"></i> 20 道題目總複習典籍
+        </h3>
+        <button onclick="toggleReviewModal()" class="text-[#1d3557] hover:text-red-500 text-3xl font-black px-2 cursor-pointer">
+          &times;
+        </button>
+      </div>
+
+      <!-- Scrollable List -->
+      <div id="review-list" class="overflow-y-auto space-y-3 pr-2 flex-1 text-sm font-bold">
+        <!-- Injected dynamically -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-4 border-t-2 border-slate-200 flex justify-end">
+        <button onclick="toggleReviewModal()" class="bruna-btn btn-action font-black px-6 py-2 text-sm">
+          關閉典籍
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =======================================================
+       1. QUESTION DATABASE (All 20 Sentences)
+       ======================================================= */
+    const rawQuestions = [
+      { id: 1, q: "彎彎的月亮像一隻小船，掛在深藍色的天空中。", ans: "明喻", exp: "出現了本體（月亮）、喻詞（像）和喻體（小船）。" },
+      { id: 2, q: "經過警方的盤問，他的狐狸尾巴終於露出來了。", ans: "借喻", exp: "直接用喻體「狐狸尾巴」借指「壞心思/罪證」，沒有出現本體和喻詞。" },
+      { id: 3, q: "妹妹的笑聲像銀鈴一樣清脆。", ans: "明喻", exp: "出現了本體（笑聲）、喻詞（像）和喻體（銀鈴）。" },
+      { id: 4, q: "雨後的彩虹像一座七彩的橋，橫跨天際。", ans: "明喻", exp: "出現了本體（彩虹）、喻詞（像）和喻體（七彩的橋）。" },
+      { id: 5, q: "只要我們手握金鑰匙，就能打開知識的大門。", ans: "借喻", exp: "直接用喻體「金鑰匙」借指「正確的方法/工具」，沒有出現本體和喻詞。" },
+      { id: 6, q: "荷葉上的露珠像一顆顆珍珠。", ans: "明喻", exp: "出現了本體（露珠）、喻詞（像）和喻體（珍珠）。" },
+      { id: 7, q: "天上的綿花在輕輕飄動着。", ans: "借喻", exp: "直接用喻體「綿花」借指「白雲」，本體與喻詞完全省略。" },
+      { id: 8, q: "他頂着一頭雜草上學，同學也勸他快去修剪頭髮。", ans: "借喻", exp: "直接用喻體「雜草」借指「亂糟糟的頭髮」，沒有出現本體和喻詞。" },
+      { id: 9, q: "她的臉蛋紅得像熟透的蘋果。", ans: "明喻", exp: "出現了本體（臉蛋）、喻詞（像）和喻體（熟透的蘋果）。" },
+      { id: 10, q: "明亮的小燈泡散佈在夜空之中，美極了！", ans: "借喻", exp: "直接用喻體「小燈泡」借指「星星」，省略了本體與喻詞。" },
+      { id: 11, q: "小猴子又在課室裏搗蛋，結果被老師罰留堂了。", ans: "借喻", exp: "直接用喻體「小猴子」借指「調皮的學生」，沒有本體與喻詞。" },
+      { id: 12, q: "每年中秋節時，人們的話題總離不開天上的大銀盤。", ans: "借喻", exp: "直接用喻體「大銀盤」借指「滿月」，本體與喻詞隱去。" },
+      { id: 13, q: "夜空中的星星像無數顆閃亮的鑽石。", ans: "明喻", exp: "出現了本體（星星）、喻詞（像）和喻體（閃亮的鑽石）。" },
+      { id: 14, q: "一朵朵白雲像軟綿綿的棉花糖。", ans: "明喻", exp: "出現了本體（白雲）、喻詞（像）和喻體（棉花糖）。" },
+      { id: 15, q: "書頁像一扇扇小窗，帶我看見不同的世界。", ans: "明喻", exp: "出現了本體（書頁）、喻詞（像）和喻體（小窗）。" },
+      { id: 16, q: "教室裡的掌聲像雷聲一樣響亮。", ans: "明喻", exp: "出現了本體（掌聲）、喻詞（像）和喻體（雷聲）。" },
+      { id: 17, q: "那本故事書像我的好朋友，陪我度過寂寞的下午。", ans: "明喻", exp: "出現了本體（故事書）、喻詞（像）和喻體（好朋友）。" },
+      { id: 18, q: "班上的小書蟲每天午飯後都躲在圖書館看書。", ans: "借喻", exp: "直接用喻體「小書蟲」借指「勤奮讀書的人」，無本體與喻詞。" },
+      { id: 19, q: "一匹又一匹的飛馬在公路上日夜奔馳。", ans: "借喻", exp: "直接用喻體「飛馬」借指「疾馳的汽車」，無本體與喻詞。" },
+      { id: 20, q: "運動場上，幾隻小老虎正努力練習跑步。", ans: "借喻", exp: "直接用喻體「小老虎」借指「生龍活虎的運動員/學生」，無本體與喻詞。" }
+    ];
+
+    /* =======================================================
+       2. WEB AUDIO SYNTHESIZER (Bruna Sound Design)
+       ======================================================= */
+    let audioCtx = null;
+    let soundMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleMute() {
+      soundMuted = !soundMuted;
+      document.getElementById('sound-icon').className = soundMuted ? "fas fa-volume-mute text-slate-400" : "fas fa-volume-up text-amber-500";
+      document.getElementById('sound-text').innerText = soundMuted ? "靜音" : "音效開";
+    }
+
+    function playSound(type) {
+      if (soundMuted) return;
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+
+        if (type === 'click') {
+          // Cheerful pop
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(400, now);
+          osc.frequency.exponentialRampToValueAtTime(800, now + 0.06);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+
+        } else if (type === 'correct') {
+          // Bright Marimba/Glockenspiel Arpeggio
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+
+            const st = now + idx * 0.08;
+            gain.gain.setValueAtTime(0.2, st);
+            gain.gain.exponentialRampToValueAtTime(0.001, st + 0.3);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(st);
+            osc.stop(st + 0.3);
+          });
+
+        } else if (type === 'wrong') {
+          // Soft playful thud
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.2);
+
+        } else if (type === 'victory') {
+          // Sweet garden fanfare
+          const notes = [392, 523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((f, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = f;
+
+            const st = now + idx * 0.1;
+            gain.gain.setValueAtTime(0.2, st);
+            gain.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(st);
+            osc.stop(st + 0.4);
+          });
+        }
+      } catch(e) {
+        console.log("Audio error:", e);
+      }
+    }
+
+    /* =======================================================
+       3. GAME STATE & MECHANICS
+       ======================================================= */
+    let currentIdx = 0;
+    let lives = 3;
+    let score = 0;
+    let activeQuestions = [];
+    let isAnsweringLocked = false;
+
+    // Dom References
+    const hudStats = document.getElementById('hud-stats');
+    const heartsContainer = document.getElementById('hearts-container');
+    const carrotScoreEl = document.getElementById('carrot-score');
+    const progressBar = document.getElementById('progress-bar');
+    const miffyChar = document.getElementById('miffy-character');
+    const miffySpeech = document.getElementById('miffy-speech');
+    const miffyDress = document.getElementById('miffy-dress');
+
+    const happyQuotes = [
+      "答對了！你太厲害了！✨",
+      "真棒！這是明喻/借喻的分辨好手！🥕",
+      "太厲害了！米菲為你拍拍手！👏",
+      "答對囉！離修辭小博士更近一步！🌟"
+    ];
+
+    const sadQuotes = [
+      "哎呀，沒關係！再仔細讀讀看～",
+      "差一點點！米菲陪你繼續加油！💪",
+      "別灰心，錯了一次會學得更牢固！✨"
+    ];
+
+    function startGame() {
+      playSound('click');
+      initAudio();
+
+      lives = 3;
+      score = 0;
+      currentIdx = 0;
+      isAnsweringLocked = false;
+
+      // Shuffle question order
+      activeQuestions = [...rawQuestions].sort(() => Math.random() - 0.5);
+
+      showScreen('screen-quiz');
+      hudStats.classList.remove('hidden');
+
+      renderHUD();
+      loadCurrentQuestion();
+    }
+
+    function showScreen(screenId) {
+      document.getElementById('screen-start').classList.add('hidden');
+      document.getElementById('screen-quiz').classList.add('hidden');
+      document.getElementById('screen-victory').classList.add('hidden');
+      document.getElementById('screen-defeat').classList.add('hidden');
+
+      document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function renderHUD() {
+      // Hearts
+      let heartsHtml = '';
+      for (let i = 0; i < 3; i++) {
+        if (i < lives) {
+          heartsHtml += `<i class="fas fa-heart text-red-500"></i>`;
+        } else {
+          heartsHtml += `<i class="fas fa-heart text-slate-300"></i>`;
+        }
+      }
+      heartsContainer.innerHTML = heartsHtml;
+      carrotScoreEl.innerText = score;
+    }
+
+    function loadCurrentQuestion() {
+      isAnsweringLocked = false;
+      const q = activeQuestions[currentIdx];
+
+      // Progress text & bar
+      document.getElementById('stage-progress-text').innerText = `第 ${currentIdx + 1} / 20 關`;
+      const pct = ((currentIdx + 1) / 20) * 100;
+      progressBar.style.width = `${pct}%`;
+
+      // Sentence text
+      document.getElementById('sentence-text').innerText = `「${q.q}」`;
+
+      // Reset Miffy pose & speech
+      miffySpeech.innerText = "仔細讀讀看題目，這個句子是「明喻」還是「借喻」呢？";
+      miffyDress.setAttribute('fill', '#2a9d8f'); // Green dress
+      miffyChar.classList.remove('anim-jump', 'anim-wobble');
+
+      // Hide explanation
+      document.getElementById('explanation-box').classList.add('hidden');
+
+      // Re-enable buttons
+      const btns = document.querySelectorAll('#action-buttons button');
+      btns.forEach(b => {
+        b.disabled = false;
+        b.classList.remove('opacity-50', 'cursor-not-allowed');
+      });
+    }
+
+    function handleAnswer(userAns) {
+      if (isAnsweringLocked) return;
+      isAnsweringLocked = true;
+
+      const q = activeQuestions[currentIdx];
+      const isCorrect = userAns === q.ans;
+
+      const expBox = document.getElementById('explanation-box');
+      const expHeader = document.getElementById('explanation-header');
+      const expText = document.getElementById('explanation-text');
+
+      // Disable buttons
+      const btns = document.querySelectorAll('#action-buttons button');
+      btns.forEach(b => {
+        b.disabled = true;
+        b.classList.add('opacity-50', 'cursor-not-allowed');
+      });
+
+      miffyChar.classList.remove('anim-jump', 'anim-wobble');
+
+      if (isCorrect) {
+        playSound('correct');
+        score += 10;
+
+        // Miffy Happy Reaction
+        miffyChar.classList.add('anim-jump');
+        miffyDress.setAttribute('fill', '#ffb703'); // Yellow dress
+        const randomQuote = happyQuotes[Math.floor(Math.random() * happyQuotes.length)];
+        miffySpeech.innerHTML = `<span class="text-green-600 font-black">${randomQuote}</span>`;
+
+        expHeader.className = "font-black text-base sm:text-lg text-green-600 flex items-center gap-2";
+        expHeader.innerHTML = `<i class="fas fa-check-circle text-xl"></i> 回答正確！答案是【${q.ans}】`;
+
+      } else {
+        playSound('wrong');
+        lives--;
+
+        // Miffy Sad Reaction
+        miffyChar.classList.add('anim-wobble');
+        miffyDress.setAttribute('fill', '#e63946'); // Red dress
+        const randomQuote = sadQuotes[Math.floor(Math.random() * sadQuotes.length)];
+        miffySpeech.innerHTML = `<span class="text-red-500 font-black">${randomQuote}</span>`;
+
+        expHeader.className = "font-black text-base sm:text-lg text-red-500 flex items-center gap-2";
+        expHeader.innerHTML = `<i class="fas fa-times-circle text-xl"></i> 回答錯誤！正確答案是【${q.ans}】`;
+      }
+
+      renderHUD();
+
+      // Show explanation
+      expText.innerHTML = `<b>修辭解析：</b>${q.exp}`;
+      expBox.classList.remove('hidden');
+
+      if (lives <= 0) {
+        document.getElementById('next-btn').innerHTML = `<span>查看結果</span> <i class="fas fa-arrow-right"></i>`;
+      } else if (currentIdx >= 19) {
+        document.getElementById('next-btn').innerHTML = `<span>前往畢業典禮！</span> <i class="fas fa-star"></i>`;
+      } else {
+        document.getElementById('next-btn').innerHTML = `<span>下一題</span> <i class="fas fa-arrow-right"></i>`;
+      }
+    }
+
+    function nextQuestion() {
+      playSound('click');
+
+      if (lives <= 0) {
+        triggerDefeat();
+        return;
+      }
+
+      currentIdx++;
+      if (currentIdx >= activeQuestions.length) {
+        triggerVictory();
+      } else {
+        loadCurrentQuestion();
+      }
+    }
+
+    function triggerVictory() {
+      playSound('victory');
+      showScreen('screen-victory');
+
+      document.getElementById('final-correct').innerText = `${score / 10} / 20 題`;
+      document.getElementById('final-carrots').innerText = `${score} 根`;
+    }
+
+    function triggerDefeat() {
+      showScreen('screen-defeat');
+    }
+
+    /* =======================================================
+       4. REVIEW MODAL SYSTEM
+       ======================================================= */
+    function renderReviewList() {
+      const container = document.getElementById('review-list');
+      container.innerHTML = rawQuestions.map((q) => `
+        <div class="bg-[#fffbeb] border-2 border-[#1d3557] p-3 rounded-2xl space-y-1">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-black text-slate-500">第 ${q.id} 題</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-black ${q.ans === '明喻' ? 'bg-[#4cc9f0] text-[#03045e]' : 'bg-[#ff70a6] text-[#590d22]'}">
+              ${q.ans}
+            </span>
+          </div>
+          <p class="text-slate-800 text-sm font-black my-1">「${q.q}」</p>
+          <p class="text-xs text-slate-600 font-bold"><b>解析：</b>${q.exp}</p>
+        </div>
+      `).join('');
+    }
+
+    function toggleReviewModal() {
+      playSound('click');
+      const modal = document.getElementById('review-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    window.onload = function() {
+      renderReviewList();
+    };
+  </script>
+</body>
+</html>
